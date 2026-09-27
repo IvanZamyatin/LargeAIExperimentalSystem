@@ -719,8 +719,13 @@ def train_language_model(config: Dict[str,Any]):
             # push embeddings for correct tokens up slightly towards logits
             for b in range(B):
                 for t in range(T):
-                    gt = targets[b,t]
-                    model.token_emb[gt] += 1e-4 * (probs[b,t] - (np.arange(V)==gt))
+                    gt = targets[b, t]
+
+                    # Toy update: strengthen the embedding associated
+                    # with the correct target token.
+                    error = 1.0 - probs[b, t, gt]
+
+                    model.token_emb[gt] += 1e-4 * error
             if steps % 20 == 0:
                 pass
         print(f"Epoch {epoch+1}/{epochs} - Loss {total_loss/steps:.4f}")
@@ -749,7 +754,7 @@ def main():
     if args.mode == 'train':
         train_language_model(config)
     elif args.mode == 'sample':
-        print("[Sample] Generating toy samples...")
+        print("[Sample] Generating samples...")
         model = OmegaNet(config)
         # random seed sequence
         idx = np.random.randint(0, config['vocab'], size=(1, config['seq_len']))
