@@ -683,7 +683,7 @@ class OmegaNet:
 # Simple training loops (toy)
 # =============================
 def train_language_model(config: Dict[str,Any]):
-    print("[Train] Starting LM training (toy)...")
+    print("[Train] Starting LM training...")
     seq_len = config.get('seq_len', 32)
     vocab = config.get('vocab', 128)
     dim = config.get('dim', 64)
